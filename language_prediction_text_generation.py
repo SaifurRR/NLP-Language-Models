@@ -66,24 +66,28 @@ class MarkovChain:
       yield [ data[i], data[i + 1] ]
       
   def generate_text(self, max_length=50):
-    context = deque()
+    #initialize -> initial Markov chain head for generating text
+    context = deque() #pop left,right
     output = []
-    if len(self.lookup_dict) > 0:
-      self.__seed_me(rand_seed=len(self.lookup_dict))
-      chain_head = [list(self.lookup_dict)[0]]
-      context.extend(chain_head)
-      
+    if len(self.lookup_dict) > 0: # lookup_dict is not empty
+      self.__seed_me(rand_seed=len(self.lookup_dict))  # seed the random number generator based on the lookup dictionary size
+      chain_head = [list(self.lookup_dict)[0]]  # Initialize the chain head, retrieves the 1st word
+      print(f'chain_head {chain_head}')
+      context.extend(chain_head)  # Extend the context with the chain head
+
       while len(output) < (max_length - 1):
-        next_choices = self.lookup_dict[context[-1]]
+        print(f'output{output}')
+        next_choices = self.lookup_dict[context[-1]]  # Get the possible next word choices, based on current word ->
+        print(f'nextchoices{next_choices}, context {context}')
         if len(next_choices) > 0:
-          next_word = random.choice(next_choices)
-          context.append(next_word)
-          output.append(context.popleft())
+          next_word = random.choice(next_choices)  # Choose a random next word
+          context.append(next_word)  # Append the next word to the context
+          output.append(context.popleft())  # Append the previous word to the output
         else:
           break
-      output.extend(list(context))
-    return " ".join(output)
-
+        `output.extend(list(context))  # Extend the output with any remaining context words
+    return " ".join(output) 
+    
 my_markov = MarkovChain()
 my_markov.add_document(training_doc1)
 my_markov.add_document(training_doc2)
